@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marksheet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Search Marksheet</h2>
+        <form id="marksheetForm">
+            <input type="text" id="studentName" placeholder="Enter Student Name" required>
+            <input type="text" id="rollNumber" placeholder="Enter Roll Number" required>
+            <button type="submit" class="btn">Show Marksheet</button>
+        </form>
+        
+        <!-- Marksheet Display -->
+        <div id="marksheetContainer" style="display:none;">
+            <h3 id="studentDetails"></h3>
+            <table id="marksheetTable">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Marks</th>
+                        <th>Total Marks</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody id="marksheetBody">
+                    <!-- Marksheet rows will be added here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="errorContainer" style="display:none;">
+            <p style="color: red;">Student not found. Please check the name and roll number.</p>
+        </div>
+    </div>
+
+    <script>
+        // Sample Data for Multiple Students
+        const students = [
+            {
+                name: 'John Doe',
+                rollNumber: '101',
+                subjects: [
+                    { subject: 'Math', marks: 80, totalMarks: 100 },
+                    { subject: 'English', marks: 85, totalMarks: 100 },
+                    { subject: 'Science', marks: 75, totalMarks: 100 },
+                ]
+            },
+            {
+                name: 'Alice',
+                rollNumber: '102',
+                subjects: [
+                    { subject: 'Math', marks: 90, totalMarks: 100 },
+                    { subject: 'English', marks: 88, totalMarks: 100 },
+                    { subject: 'Science', marks: 92, totalMarks: 100 },
+                ]
+            }
+        ];
+
+        // Handle form submission
+        document.getElementById('marksheetForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from submitting the traditional way
+
+            // Get form values
+            const studentName = document.getElementById('studentName').value.trim().toLowerCase();
+            const rollNumber = document.getElementById('rollNumber').value.trim();
+
+            // Search for the student
+            const foundStudent = students.find(student => 
+                student.name.toLowerCase() === studentName && student.rollNumber === rollNumber
+            );
+
+            // Display marksheet or error message
+            if (foundStudent) {
+                displayMarksheet(foundStudent);
+                document.getElementById('errorContainer').style.display = 'none';
+            } else {
+                document.getElementById('marksheetContainer').style.display = 'none';
+                document.getElementById('errorContainer').style.display = 'block';
+            }
+        });
+
+        // Function to display marksheet
+        function displayMarksheet(student) {
+            // Show student details
+            const studentDetails = `${student.name} (Roll No: ${student.rollNumber})`;
+            document.getElementById('studentDetails').textContent = studentDetails;
+
+            // Clear previous table rows
+            const marksheetBody = document.getElementById('marksheetBody');
+            marksheetBody.innerHTML = '';
+
+            // Add new rows for each subject
+            student.subjects.forEach(subject => {
+                const percentage = (subject.marks / subject.totalMarks) * 100;
+                const row = `
+                    <tr>
+                        <td>${subject.subject}</td>
+                        <td>${subject.marks}</td>
+                        <td>${subject.totalMarks}</td>
+                        <td>${percentage.toFixed(2)}%</td>
+                    </tr>
+                `;
+                marksheetBody.insertAdjacentHTML('beforeend', row);
+            });
+
+            // Show marksheet
+            document.getElementById('marksheetContainer').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+
